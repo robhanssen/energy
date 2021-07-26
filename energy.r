@@ -111,7 +111,13 @@ thisyear <- inner_join(dailyuse, rollingdailyuse) %>%
             + geom_line(aes(y = rollingmean), color = "green")
             + geom_line(aes(y = zoo::rollmean(dailyuse, 14, na.pad = TRUE)))
             + geom_vline(xintercept = as.Date("2021-06-14"))
+            + theme_light() 
+            + labs(x = "Date", 
+                   y = "Daily energy use (in kWh)", 
+                   caption = "Green line is long-term average\nBlack line is 14-days rolling average")
 )
+
+ggsave("thisyearcomparedtoalltime.pdf", width=11, height=8)
 
 thisyear %>%
             ggplot +
