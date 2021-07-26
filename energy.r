@@ -2,7 +2,7 @@ library(tidyverse)
 library(lubridate)
 library(xml2)
 
-datafile <- "source/energyusage.txt"
+datafile <- "source/energyusage20210726.xml"
 
 data <- read_xml(datafile)
 
@@ -99,12 +99,12 @@ rollingdailyuse <- bind_rows(tail(averagedailyuse, 6),
                     filter(!is.na(rollingmean))
 
 thisyear <- inner_join(dailyuse, rollingdailyuse) %>%
-            #filter(date > floor_date(today(),"1 year")) %>%
+            filter(date > floor_date(today(),"1 year")) %>%
             mutate(cumuse = cumsum(dailyuse),
                    cumeaveuse = cumsum(rollingmean)
                    )
 
-(thisyear %>%
+ (thisyear %>%
             ggplot()
             + aes(x = date, y = dailyuse) 
             + geom_point(color = "black", fill = "black", alpha = 0.2)
