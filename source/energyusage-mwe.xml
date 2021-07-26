@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:entry xmlns:espi="http://naesb.org/espi" xmlns:ns3="http://www.w3.org/2005/Atom">
+    <ns3:link href="https://cust-api.duke-energy.com/cea/v1/usage" rel="self"/>
+    <ns3:content>
+        <ns3:id>urn:uuid:XXXXXXXXXXXXXXXXXXXXXX</ns3:id>
+        <espi:IntervalBlock>
+            <espi:interval>
+                <espi:servicePointId>6XXXXXXXXXXX3</espi:servicePointId>
+                <espi:serviceType>ELECTRIC</espi:serviceType>
+                <espi:unitOfMeasure>kWH</espi:unitOfMeasure>
+                <espi:secondsPerInterval>1800</espi:secondsPerInterval>
+                <espi:duration>65750400</espi:duration>
+                <espi:start>1560556800</espi:start>
+            </espi:interval>
+            <espi:IntervalReading>
+                <espi:timePeriod>
+                    <espi:start>1560556800</espi:start>
+                </espi:timePeriod>
+                <espi:value>0.09</espi:value>
+            </espi:IntervalReading>
+            <espi:IntervalReading>
+                <espi:timePeriod>
+                    <espi:start>1626391800</espi:start>
+                </espi:timePeriod>
+                <espi:value>0.12</espi:value>
+            </espi:IntervalReading>
+        </espi:IntervalBlock>
+    </ns3:content>
+    <ns3:published>2021-07-16T17:15:33.314</ns3:published>
+    <ns3:updated>2021-07-16T17:15:33.314</ns3:updated>
+</ns3:entry>

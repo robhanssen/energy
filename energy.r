@@ -1,18 +1,33 @@
 library(tidyverse)
 library(lubridate)
+library(xml2)
 
 datafile <- "source/energyusage.txt"
 
-energy <- read_csv(datafile) %>% 
-            select(!starts_with("espi")) %>% 
-            mutate(date = as.Date(datetime, format="%Y-%m-%d"), 
-                   year = year(datetime),
-                   month = month(datetime),
-                   day = day(datetime),
-                   hour = hour(datetime),
-                   minute = minute(datetime),
-                   runningdate = 100 * month + day
+data <- read_xml(datafile)
+
+time <- xml_find_all(data, "//espi:start") %>%
+                as_list() %>%
+                unlist() %>%
+                as.numeric()
+
+time <- time[2:length(time)]
+
+value <- xml_find_all(data, "//espi:value") %>%
+                as_list() %>% 
+                unlist() %>% 
+                as.numeric()
+
+energy <- tibble(datetime = as_datetime(time), energy = value) %>%
+                mutate(date = as.Date(datetime, format = "%Y-%m-%d"),
+                        year = year(datetime),
+                        month = month(datetime),
+                        day = day(datetime),
+                        hour = hour(datetime),
+                        minute = minute(datetime),
+                        runningdate = 100 * month + day
                 )
+
 
 byday <- energy %>% 
             group_by(date) %>%
