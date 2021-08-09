@@ -18,8 +18,8 @@ for (d in rawdatafiles) {
         time <- time[2:length(time)]
 
         value <- xml_find_all(rawdata, "//espi:value") %>%
-                        as_list() %>% 
-                        unlist() %>% 
+                        as_list() %>%
+                        unlist() %>%
                         as.numeric()
 
         energy_tmp <- tibble(datetime = as_datetime(time), energy = value)
@@ -48,6 +48,7 @@ years <- unique(energy$year)
 for (y in years) {
         energy_by_year <- energy %>%
                         filter(year == y)
+
         fname <- paste0("data-by-year/",
                         "energyuse-",
                         y,
