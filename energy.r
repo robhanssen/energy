@@ -2,36 +2,14 @@ library(tidyverse)
 library(lubridate)
 library(xml2)
 
-YEAR = year(today())
+this_year <- year(today())
 
-datafile <- "source/energyusage20210726.xml"
+datadir <- "./data-by-year"
 
-data <- read_xml(datafile)
+energy <- list.files(path = datadir, full.names = TRUE) %>%
+                map_df( ~ read_csv(.))
 
-time <- xml_find_all(data, "//espi:start") %>%
-                as_list() %>%
-                unlist() %>%
-                as.numeric()
-
-time <- time[2:length(time)]
-
-value <- xml_find_all(data, "//espi:value") %>%
-                as_list() %>% 
-                unlist() %>% 
-                as.numeric()
-
-energy <- tibble(datetime = as_datetime(time), energy = value) %>%
-                mutate(date = as.Date(datetime, format = "%Y-%m-%d"),
-                        year = year(datetime),
-                        month = month(datetime),
-                        day = day(datetime),
-                        hour = hour(datetime),
-                        minute = minute(datetime),
-                        runningdate = 100 * month + day
-                )
-
-
-byday <- energy %>% 
+byday <- energy %>%
             group_by(date) %>%
             summarize(use = sum(energy), 
                       year = year,
@@ -66,7 +44,7 @@ byday %>%
         ggplot +
             aes(x = date, y = use) +
             geom_point() +
-            scale_x_date(date_breaks = "1 week",
+            scale_x_date(date_breaks = "3 months",
                           date_labels = "%B %d",
                           limits = c(monthsago(PLOTRANGE), today())) +
             geom_line(data = dt, aes(y = .fitted)) +
@@ -101,22 +79,21 @@ rollingdailyuse <- bind_rows(tail(averagedailyuse, 6),
                     filter(!is.na(rollingmean))
 
 thisyear <- inner_join(dailyuse, rollingdailyuse) %>%
-            filter(date >= floor_date(today(),"1 year")) %>%
+            filter(date >= floor_date(today(), "1 year")) %>%
             mutate(cumuse = cumsum(dailyuse),
                    cumeaveuse = cumsum(rollingmean)
                    )
 
- (thisyear %>%
+(thisyear %>%
             ggplot()
             + aes(x = date, y = dailyuse) 
-            + geom_point(color = "black", fill = "black", alpha = 0.2)
-            + geom_line(aes(y = rollingmean), color = "green")
+            + geom_line(aes(y = rollingmean), color = "red", lty = 1, size = 1)
             + geom_line(aes(y = zoo::rollmean(dailyuse, 14, na.pad = TRUE)))
-        #     + geom_vline(xintercept = as.Date("2021-06-14"))
+            + expand_limits(y = 0)
             + theme_light() 
-            + labs(x = paste0("Date (in ", YEAR,")"), 
+            + labs(x = paste0("Date (in ", this_year,")"), 
                    y = "Daily energy use (in kWh)", 
-                   caption = "Green line is long-term average\nBlack line is 14-days rolling average")
+                   caption = "Red line is long-term average\nBlack line is current 14-days rolling average")
 )
 
 ggsave("graphs/thisyearcomparedtoalltime.pdf", width=11, height=8)
