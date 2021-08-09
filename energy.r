@@ -1,6 +1,5 @@
 library(tidyverse)
 library(lubridate)
-library(xml2)
 
 this_year <- year(today())
 
