@@ -1,5 +1,6 @@
 library(tidyverse)
 library(lubridate)
+theme_set(theme_light())
 
 this_year <- year(today())
 
@@ -90,8 +91,8 @@ thisyear <- inner_join(dailyuse, rollingdailyuse) %>%
             ggplot()
             + aes(x = date, y = dailyuse)
             + geom_line(aes(y = rollingmean), color = "red", lty = 1, size = 1)
-            + geom_line(aes(y = zoo::rollmean(dailyuse, 14, na.pad = TRUE)))
-            + expand_limits(y = 0)
+            + geom_line(aes(y = zoo::rollmean(dailyuse, 7, na.pad = TRUE)))
+            + expand_limits(y = 0, x = ceiling_date(today(), "1 month"))
             + theme_light()
             + labs(x = paste0("Date (in ", this_year, ")"),
                    y = "Daily energy use (in kWh)",
