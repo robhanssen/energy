@@ -9,7 +9,8 @@ this_year <- year(today())
 datadir <- "./data-by-year"
 
 energy <- list.files(path = datadir, full.names = TRUE) %>%
-                map_df(~ read_csv(.)) %>% filter(datetime >= as.Date("2021-01-01"))
+                map_df(~ read_csv(.)) %>% 
+                filter(datetime >= as.Date("2021-01-01"))
 
 temperature <- read_csv("Outside.csv") %>%
         mutate(date = date(datetime),
