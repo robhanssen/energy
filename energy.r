@@ -48,7 +48,7 @@ bymonth <-
 bymonth_thisyear <-
         energy %>%
         filter(year == year(today())) %>%
-        group_by(month) %>%        
+        group_by(month) %>%
         summarize(energy = sum(energy), .groups = "drop") %>%
         mutate(monthname = factor(month.abb[month], levels = month.abb)) %>%
         mutate(totaluse = cumsum(energy))
@@ -56,26 +56,26 @@ bymonth_thisyear <-
 monthgraph <-
         bymonth %>%
         ggplot +
-        aes(x = monthname, y = energy, group = FALSE) + 
+        aes(x = monthname, y = energy, group = FALSE) +
         # geom_line() +
         geom_ribbon(aes(ymin = 0, ymax = energy), alpha = .5) +
         geom_line(data = bymonth_thisyear, aes(group = FALSE), lty = 2, size = 1) +
         geom_point(data = bymonth_thisyear) +
         labs(x = "Month",
              y = "Average monthly energy use (in kWh)",
-             title = "Comparison of historical vs current monthly energy use") + 
+             title = "Comparison of historical vs current monthly energy use") +
         scale_y_continuous(labels = scales::comma_format())
 
 # cumulative graph
 cumgraph <-
         bymonth %>%
         ggplot +
-        aes(x = monthname, y = totaluse, group = FALSE) + 
+        aes(x = monthname, y = totaluse, group = FALSE) +
         geom_ribbon(aes(ymin = 0, ymax = totaluse), alpha = .5) +
         geom_line(data = bymonth_thisyear, aes(group = FALSE), lty = 2, size = 1) +
         geom_point(data = bymonth_thisyear) +
         labs(x = "Month",
-             y = "Average monthly energy use (in kWh)") + 
+             y = "Average monthly energy use (in kWh)") +
         scale_y_continuous(labels = scales::comma_format())
 
 plot <- monthgraph + cumgraph
