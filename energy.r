@@ -137,17 +137,17 @@ thisyear <- inner_join(dailyuse, rollingdailyuse) %>%
                    cumeaveuse = cumsum(rollingmean)
                    )
 
-(thisyear %>%
-            ggplot()
-            + aes(x = date, y = dailyuse)
-            + geom_line(aes(y = rollingmean), color = "red", lty = 1, size = 1)
-            + geom_line(aes(y = zoo::rollmean(dailyuse, 7, na.pad = TRUE)))
-            + expand_limits(y = 0, x = ceiling_date(today(), "1 month"))
-            + theme_light()
-            + labs(x = paste0("Date (in ", this_year, ")"),
+thisyear %>%
+            ggplot() +
+            aes(x = date, y = dailyuse) +
+            geom_line(aes(y = rollingmean), color = "red", lty = 1, size = 1) +
+            geom_line(aes(y = zoo::rollmean(dailyuse, 7, na.pad = TRUE))) +
+            expand_limits(y = 0, x = ceiling_date(today(), "1 month")) +
+            theme_light() +
+            labs(x = paste0("Date (in ", this_year, ")"),
                    y = "Daily energy use (in kWh)",
                    caption = "Red line is long-term average\nBlack line is current 14-days rolling average")
-)
+
 
 ggsave("graphs/thisyearcomparedtoalltime.pdf", width = 11, height = 8)
 
@@ -157,3 +157,62 @@ thisyear %>%
             geom_point(color = "black", fill = "black", alpha = .2) +
             geom_line(aes(y = cumeaveuse)) +
             scale_x_date(date_breaks = "2 months", date_label = "%b %Y")
+
+#
+# cumulative use with current year highlighted
+#            
+
+this_year = year(today())
+
+cumulative_use <-
+        energy %>% 
+        group_by(date) %>%
+        summarize(energy = sum(energy), 
+                  .groups = "drop") %>%
+        mutate(year = year(date)) %>%
+        group_by(year) %>%
+        mutate(yearuse = cumsum(energy), 
+               color = case_when(year == year(today()) ~ "red",
+                                 TRUE ~ "gray50"), 
+               scaled_date = date + years(this_year - year)
+                ) %>%
+        ungroup() %>%
+        mutate(yearuse = case_when(year == 2019 ~ 9313 - 5580 + yearuse,
+                                   TRUE ~ yearuse))
+
+min_year <- min(cumulative_use$year)
+max_year <- max(cumulative_use$year)
+yearcolorrange <- as_factor(min_year:max_year)
+yearcolor <- c(rep("gray50", length(yearcolorrange) - 2), "black", "red")
+linetypes <- c(rep("dotted", length(yearcolorrange) - 2), "dashed", "solid")
+linsizes <- c(rep(0.5, length(yearcolorrange) - 2), 0.75, 1.5)
+
+cumulative_use %>%
+        ggplot +
+        aes(x = scaled_date,
+            y = yearuse,
+            color = factor(year, levels = min_year:max_year),
+            size = factor(year, levels = min_year:max_year),
+            linetype = factor(year, levels = min_year:max_year)) +
+        geom_line() + 
+        scale_color_manual(values = yearcolor) +
+        scale_linetype_manual(values = linetypes) +
+        scale_size_manual(values = linsizes) +
+        scale_x_date(date_labels = "%b") + 
+        scale_y_continuous(labels = scales::comma_format(),
+                           breaks = 2000 * 0:10) +
+        labs(x = "Date",
+             y = "Cumulative annual use (in kWh)",
+             title = "Comparison of cumulative use of electricity",
+             caption = paste0("Red line: ", 
+                              this_year,
+                              "\nBlack line: ",
+                              this_year - 1,
+                              "\nGray lines: ",
+                              min_year,
+                              "-",
+                              max_year - 2)
+             ) +
+        theme(legend.position = "none")
+
+ggsave("graphs/cumulative-use.png", width = 6, height = 6)
