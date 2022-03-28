@@ -149,7 +149,7 @@ thisyear %>%
                    caption = "Red line is long-term average\nBlack line is current 14-days rolling average")
 
 
-ggsave("graphs/thisyearcomparedtoalltime.pdf", width = 11, height = 8)
+ggsave("graphs/thisyearcomparedtoalltime.png", width = 8, height = 6)
 
 thisyear %>%
             ggplot +
