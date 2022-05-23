@@ -63,4 +63,4 @@ energy <-
 
 years <- unique(energy$year)
 
-map(years, ~write_data_file(energy, .x))
+map_dbl(years, ~write_data_file(energy, .x))
