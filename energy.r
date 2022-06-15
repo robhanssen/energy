@@ -14,9 +14,10 @@ byday <- energy %>%
         group_by(date) %>%
         summarize(
                 use = sum(energy),
-                year = year,
-                month = factor(month),
-                day = day
+                .groups = "drop") %>%
+        mutate(year = year(date),
+                month = factor(month(date)),
+                day = day(date)
         )
 
 model <- lm(use ~ month + day, data = byday)
