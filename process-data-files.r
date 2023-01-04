@@ -23,7 +23,9 @@ read_duke_xml <- function(d) {
                 unlist() %>%
                 as.numeric()
 
-        energy <- tibble::tibble(time = time, energy = value) %>% dplyr::filter(energy > 0)
+        energy <-
+                tibble::tibble(time = time, energy = value) %>%
+                dplyr::filter(energy > 0)
 
         return(energy)
 }
