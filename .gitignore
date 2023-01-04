@@ -40,3 +40,5 @@ vignettes/*.pdf
 
 *.pdf
 *.png
+data-by-year/*.csv
+*.jml
