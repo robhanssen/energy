@@ -16,8 +16,11 @@ analyze_data_file <- function(f) {
         earliest <- lubridate::as_datetime(min(time))
         latest <- lubridate::as_datetime(max(time))
 
-        tibble::tibble(filename = f, earliest_time = earliest, latest_time = latest) %>%
-        mutate(across(ends_with("time"), ~format(.x, format = "%b %d, %Y")))
+        tibble::tibble(filename = f,
+                       earliest_time = earliest,
+                       latest_time = latest) %>%
+                mutate(across(ends_with("time"),
+                        ~ format(.x, format = "%b %d, %Y")))
 }
 
 map_df(
