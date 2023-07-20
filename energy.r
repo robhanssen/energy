@@ -194,12 +194,12 @@ this_year <- year(today())
 
 cumulative_use <-
         energy %>%
-        group_by(date) %>%
-        summarize(
-                energy = sum(energy),
-                .groups = "drop"
-        ) %>%
-        mutate(year = year(date)) %>%
+        # group_by(date) %>%
+        # summarize(
+        #         energy = sum(energy),
+        #         .groups = "drop"
+        # ) %>%
+        # mutate(year = year(date)) %>%
         group_by(year) %>%
         mutate(
                 yearuse = cumsum(energy),
@@ -211,7 +211,7 @@ cumulative_use <-
         ) %>%
         ungroup() %>%
         mutate(yearuse = case_when(
-                year == 2019 ~ 9313 - 5580 + yearuse,
+                year == 2019 ~ 9313 - 6193 + yearuse,
                 TRUE ~ yearuse
         ))
 

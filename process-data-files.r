@@ -52,6 +52,7 @@ energy_raw <-
 energy <-
         energy_raw %>%
         filter(!duplicated(time)) %>%
+        arrange(time) %>%
         mutate(
                 datetime = as_datetime(time),
                 date = as.Date(datetime),
