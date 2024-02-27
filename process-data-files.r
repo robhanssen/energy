@@ -86,4 +86,6 @@ energy <-
 
 years <- unique(energy$year)
 
+saveRDS(energy, file = "Rdata/energy.rds")
+
 walk(years, ~ write_data_file(energy, .x))

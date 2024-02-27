@@ -42,3 +42,4 @@ vignettes/*.pdf
 *.png
 data-by-year/*.csv
 *.jml
+Rdata/*.rds

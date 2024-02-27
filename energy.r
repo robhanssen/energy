@@ -5,10 +5,7 @@ theme_set(theme_light())
 
 this_year <- year(today())
 
-datadir <- "./data-by-year"
-
-energy <- list.files(path = datadir, full.names = TRUE) %>%
-    map_df(~ read_csv(., show_col_types = FALSE))
+energy <- readRDS("Rdata/energy.rds")
 
 byday <- energy %>%
     group_by(date) %>%
