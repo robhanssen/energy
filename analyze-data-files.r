@@ -19,19 +19,27 @@ analyze_data_file <- function(f) {
         filename = f,
         earliest_time = earliest,
         latest_time = latest
-    ) %>%
-        mutate(across(
-            ends_with("time"),
-            ~ format(.x, format = "%b %d, %Y")
-        ))
+    ) # %>%
+
 }
 
-map_df(
-    list.files(
-        path = "source/",
-        pattern = "*.xml",
-        full.names = TRUE
-    ),
-    ~ analyze_data_file(.x)
-) %>%
+reported <-
+    map_df(
+        list.files(
+            path = "source/",
+            pattern = "*.xml",
+            full.names = TRUE
+        ),
+        ~ analyze_data_file(.x)
+    )
+
+reported %>%
+    mutate(across(
+        ends_with("time"),
+        ~ format(.x, format = "%b %d, %Y")
+    )) %>%
     knitr::kable()
+
+reported %>%
+    ggplot(aes(y = filename)) + 
+    geom_segment(aes(x = earliest_time, xend = latest_time, yend = filename))
